@@ -21,3 +21,7 @@ class Data(db.Model):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+@app.before_first_request
+def create_database():
+     db.create_all()

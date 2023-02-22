@@ -1,5 +1,6 @@
 from flask import render_template, request, jsonify, app
 from model import *
+from model import app, db
 
 esp_url = "http://172.20.10.10:80"
 
@@ -9,13 +10,15 @@ data = Data()
 def read_data_from_esp():
     try:
         url = f'{esp_url}/sensor_data'
-        res = requests.get(url, timeout=0.05)
+        res = request.get(url, timeout=0.05)
         content = res.text.split("/")
         data = Data(air_temp_c=float(content[0]),
                     humidity=float(content[1]))
         # datetime = datetime.datetime.now()
         db.session.add(data)
         db.session.commit()
+        
+
     except:
         print("Error esp")
         return False
@@ -46,7 +49,7 @@ def read_data_from_esp():
 #         if abs((data.datetime - datetime.datetime.now()).total_seconds()) > 30:
 #             read_data_from_esp()
 #             return get_last_data(attempt=attempt + 1)
-#         else:
+#         else:Ы
 #             return data
 #     else:
 #         read_data_from_esp()
@@ -58,6 +61,10 @@ def show_main():
     return render_template("main.html", data=data)
 
 
+
 if __name__ == '__main__':
-    db.create_all()
+
+
+    app.app_context().push()
+
     app.run()
